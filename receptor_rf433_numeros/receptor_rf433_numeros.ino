@@ -8,6 +8,8 @@ void setup()
     vw_setup(2000);
     vw_set_rx_pin(dataPin);
     vw_rx_start();
+
+    pinMode(LED_BUILTIN, OUTPUT);
 }
  
 void loop()
@@ -19,6 +21,8 @@ void loop()
     if (vw_get_message((uint8_t *)buf,&buflen))
     {
       String dataString;
+
+      digitalWrite(LED_BUILTIN, HIGH);
       
         if((char)buf[0]=='i')
         {
@@ -46,5 +50,8 @@ void loop()
             Serial.println("Detectado: ");
             Serial.println(dataString);
         }
+
+        digitalWrite(LED_BUILTIN, LOW); 
+        delay(1000);
     }
 }

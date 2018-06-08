@@ -1,6 +1,6 @@
 #include <VirtualWire.h>
  
-const int dataPin = 9;
+const int dataPin = 11;
 const int ledPin = 13;
  
 void setup()

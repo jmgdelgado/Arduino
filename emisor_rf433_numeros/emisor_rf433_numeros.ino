@@ -6,13 +6,15 @@ void setup()
 {
     vw_setup(2000);
     vw_set_tx_pin(dataPin);
+    pinMode(LED_BUILTIN, OUTPUT);
 }
  
 void loop()
 {
    String str;  
     char buf[VW_MAX_MESSAGE_LEN];
-   
+
+   digitalWrite(LED_BUILTIN, HIGH); 
    // Ejemplo de envío int
    int dataInt = millis() / 1000;
     str = "i" + String(dataInt); /// Convertir a string
@@ -28,4 +30,7 @@ void loop()
     vw_wait_tx(); // Esperar envio
     
     delay(200);
+ 
+    digitalWrite(LED_BUILTIN, LOW); 
+    delay(1000);
 }
