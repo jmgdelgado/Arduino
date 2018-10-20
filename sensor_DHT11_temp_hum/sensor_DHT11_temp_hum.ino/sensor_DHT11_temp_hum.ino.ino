@@ -5,6 +5,8 @@
 // ATENCION: Instalar la version 1.2.3 con la 1.3.0 no compila 
 // 
 // La pata DATA se conecta a una salida digital
+// En Arduino Nano: Pin D2
+// En NodeMCU: Pin D4
 //
 // VCC 5 voltios 
 

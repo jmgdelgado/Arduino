@@ -1,3 +1,17 @@
+// SENSOR DE TEMPERATURA Y HUMEDAD DHT11
+// Sensor DHT11 de Temperatura y Humedad
+//
+// Se necesita la libreria de Adafruit DHT sensor library.
+// ATENCION: Instalar la version 1.2.3 con la 1.3.0 no compila 
+// 
+// La pata DATA se conecta a una salida digital
+// En Arduino Nano: Pin D2
+// En NodeMCU: Pin D4
+//
+// VCC 5 voltios 
+
+#include <DHT.h>
+
 // OLED LCD LED DISPLAY I2C
 // Aunque pone que es de 128x64 parece que es 128x32
 // Es de comunicacion I2C
@@ -16,9 +30,19 @@ Adafruit_SSD1306 display(OLED_RESET);
 
 char buffer[10];
 
+int SENSOR = 2;
+int temp, humedad;   // La precision es de un grado, no va a dar decimales
+
+DHT dht (SENSOR, DHT11);
+
 void setup() {
   // put your setup code here, to run once:
+
   Serial.begin(9600);
+  
+  // Comenzamos el sensor DHT
+  dht.begin();
+
 
   // Hay que conocer la direccion I2C del dispositivo, para ello ejecutar antes el 
   // script IC2_Scanner. En este caso nos ha dado la direccion 0x3C, hay que poner
@@ -32,59 +56,46 @@ void setup() {
   // Since the buffer is intialized with an Adafruit splashscreen
   // internally, this will display the splashscreen.
   display.display();
-  delay(2000);
-  
+  delay(2000);  
   // Clear the buffer.
   display.clearDisplay();
-
-  // text display tests
-  display.setTextSize(1);
-  display.setTextColor(WHITE);
-  display.setCursor(0,0);
-  display.println("Hello, world!");
-  display.setTextColor(BLACK, WHITE); // 'inverted' text
-  display.println(3.141592);
-  display.setTextSize(1);
-  display.setTextColor(WHITE);
-  //   display.print("0x"); display.println(0xDEADBEEF, HEX);
-  //   display.display();
-  //   delay(6000);
-
-
-  // Apagado
-  //display.clearDisplay(); 
-  //display.display();
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
 
-  display.setTextSize(1);
-  display.setTextColor(WHITE);
-  display.setCursor(0,0);
-  display.println("Hello, world!");
-  display.setTextColor(BLACK, WHITE); // 'inverted' text
-  display.println(3.141592);
-  display.setTextSize(1);
-  display.setTextColor(WHITE);
+  humedad = dht.readHumidity();
+  temp = dht.readTemperature();
+  float hic = dht.computeHeatIndex(temp, humedad, false);
 
+  Serial.print("Temperatura: ");
+  Serial.print(temp);
+  Serial.print("ºC Humedad: ");
+  Serial.print(humedad);
+  Serial.print("%  Indice de calor: ");
+  Serial.println(hic);
 
+  if (temp > -100 && temp < 200)
+  {    
+      display.clearDisplay();
 
-  long t= millis()/1000 ;
-  int horas = t/3600 ;
-  int minutos = (t % 3600) / 60;
-  int segs = (t - horas*3600 - minutos * 60) % 60 ;
-
-  int n = sprintf(buffer, "%02d:%02d:%02d", horas, minutos, segs);
-
-
-  display.setCursor(0,25);
+      display.setTextSize(1);
+      display.setTextColor(WHITE);
+      display.setCursor(0,0);
+      display.println("Sensor DHT11");
+      display.print("Temperatura: ");
+      display.print(temp);
+      display.print(" ");
+      display.print((char)167);  
+      display.println("C");
+      display.print("Humedad: ");
+      display.print(humedad);
+      display.println(" %");
   
-  display.println(buffer);
-  display.display();
+      display.display(); 
+  }
+  
   delay(1000);
-  display.clearDisplay(); 
-  display.display();  
   
-      
+
 }
